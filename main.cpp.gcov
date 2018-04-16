@@ -1,0 +1,328 @@
+        -:    0:Source:main.cpp
+        -:    0:Graph:main.gcno
+        -:    0:Data:main.gcda
+        -:    0:Runs:3
+        -:    0:Programs:1
+        -:    1://
+        -:    2://  main.cpp
+        -:    3://  LinkedList
+        -:    4://
+        -:    5://  Created by Даниил Смирнов on 21.03.2018.
+        -:    6://  Copyright © 2018 Даниил Смирнов. All rights reserved.
+        -:    7://
+        -:    8:
+        -:    9:#include <iostream>
+        -:   10:using namespace std;
+        -:   11:
+        -:   12:struct Node {
+        -:   13:	int value;
+        -:   14:	Node *next;
+        -:   15:};
+        -:   16:
+        -:   17:class List {
+        -:   18:	
+        -:   19:protected:
+        -:   20:	int size;
+        -:   21:	Node *root;
+        -:   22:	Node *last;
+        -:   23:	
+        -:   24:	Node* lastNodePreviouslyGot;
+        -:   25:	int lastIndexPreviouslyGot;
+        -:   26:	bool isCached;
+        -:   27:	
+        -:   28:	Node* getNodeAt(int index);
+        -:   29:
+        -:   30:public:
+        -:   31:	
+        -:   32:	List();
+        -:   33:	~List();
+        -:   34:	
+        -:   35:	int getSize();
+        -:   36:	
+        -:   37:	void addToEnd(int value);
+        -:   38:	
+        -:   39:	void addAt(int index, int value);
+        -:   40:	
+        -:   41:	void setValueAt(int index, int value);
+        -:   42:	
+        -:   43:	int getNodeValueAt(int index);
+        -:   44:	
+        -:   45:	int removeAt(int index);
+        -:   46:	
+        -:   47:	int removeFirst();
+        -:   48:	
+        -:   49:	int pop();
+        -:   50:	
+        -:   51:	void addToStart(int value);
+        -:   52:	
+        -:   53:	void clear();
+        -:   54:};
+        -:   55:
+        3:   56:List::List() {
+        -:   57:	
+        3:   58:	root = NULL;
+        3:   59:	last = NULL;
+        3:   60:	size = 0;
+        -:   61:	
+        3:   62:	isCached = false;
+        3:   63:	lastNodePreviouslyGot = NULL;
+        3:   64:	lastIndexPreviouslyGot = 0;
+        6:   65:}
+        -:   66:
+        3:   67:List::~List() {
+        -:   68:	
+        -:   69:	Node *temp;
+        -:   70:	
+       12:   71:	while(root != NULL) {
+        3:   72:		temp = root;
+        3:   73:		root = root->next;
+        6:   74:		delete temp;
+        -:   75:	}
+        -:   76:	
+        3:   77:	isCached = false;
+        3:   78:	last = NULL;
+        3:   79:	size = 0;
+        6:   80:}
+        -:   81:
+        -:   82:int List::getSize() {
+        6:   83:	return size;
+        -:   84:}
+        -:   85:
+        -:   86:int List::getNodeValueAt(int index) {
+        -:   87:	
+       10:   88:	Node* temp = getNodeAt(index);
+        -:   89:	
+       10:   90:	if (temp) {
+        6:   91:		return temp->value;
+        -:   92:	} else {
+        4:   93:		cout << "Could not get node value at index - " << index << endl;
+        4:   94:		return 0;
+        -:   95:	}
+       10:   96:}
+        -:   97:
+        -:   98:Node* List::getNodeAt(int index) {
+        -:   99:	
+       10:  100:	int position = 0;
+       10:  101:	Node* current = root;
+        -:  102:	
+       16:  103:	if(isCached && lastIndexPreviouslyGot <= index) {
+        4:  104:		position = lastIndexPreviouslyGot;
+        4:  105:		current = lastNodePreviouslyGot;
+        4:  106:	}
+        -:  107:	
+       47:  108:	while(position < index && current) {
+        4:  109:		current = current->next;
+        4:  110:		position++;
+        -:  111:	}
+        -:  112:	
+       10:  113:	if(position == index) {
+        9:  114:		isCached = true;
+        9:  115:		lastIndexPreviouslyGot = index;
+        9:  116:		lastNodePreviouslyGot = current;
+        -:  117:		
+        9:  118:		return current;
+        -:  119:	}
+        -:  120:	
+        1:  121:	return NULL;
+       10:  122:}
+        -:  123:
+        -:  124:void List::setValueAt(int index, int value) {
+        -:  125:	
+    #####:  126:	if(index < 0 || index >= size) {
+    #####:  127:		cout << "Index out of range" << endl;
+    #####:  128:		return;
+        -:  129:	}
+        -:  130:	
+    #####:  131:	getNodeAt(index)->value = value;
+    #####:  132:}
+        -:  133:
+        -:  134:void List::addToEnd(int value) {
+        -:  135:	
+        4:  136:	Node *temp = new Node();
+        4:  137:	temp->value = value;
+        4:  138:	temp->next = NULL;
+        -:  139:	
+        4:  140:	if (root) {
+        2:  141:		last->next = temp;
+        2:  142:		last = temp;
+        2:  143:	} else {
+        2:  144:		root = temp;
+        2:  145:		last = temp;
+        -:  146:	}
+        4:  147:	size++;
+        4:  148:	isCached = false;
+        4:  149:}
+        -:  150:
+        -:  151:void List::addToStart(int value) {
+        -:  152:	
+        2:  153:	if(size == 0) {
+        2:  154:		addToEnd(value);
+        2:  155:		return;
+        -:  156:	}
+        -:  157:	
+    #####:  158:	Node* temp = new Node();
+    #####:  159:	temp->next = root;
+    #####:  160:	temp->value = value;
+    #####:  161:	root = temp;
+        -:  162:	
+    #####:  163:	isCached = false;
+    #####:  164:	size++;
+        2:  165:}
+        -:  166:
+        -:  167:void List::addAt(int index, int value) {
+        -:  168:	
+    #####:  169:	if (index >= size) {
+    #####:  170:		addToEnd(value);
+    #####:  171:		return;
+        -:  172:	}
+        -:  173:	
+    #####:  174:	if (index == 0) {
+    #####:  175:		addToStart(value);
+    #####:  176:		return;
+        -:  177:	}
+        -:  178:	
+    #####:  179:	Node* temp = new Node();
+    #####:  180:	Node* prev = getNodeAt(index-1);
+        -:  181:	
+    #####:  182:	temp->value = value;
+    #####:  183:	temp->next = prev->next;
+    #####:  184:	prev->next = temp;
+        -:  185:	
+    #####:  186:	size++;
+    #####:  187:	isCached = false;
+    #####:  188:}
+        -:  189:
+        -:  190:int List::pop() {
+        -:  191:	
+    #####:  192:	if(size <= 0) {
+    #####:  193:		return 0;
+        -:  194:	}
+        -:  195:	
+    #####:  196:	isCached = false;
+        -:  197:	
+    #####:  198:	if(size > 2) {
+        -:  199:		
+    #####:  200:		Node* temp = getNodeAt(size - 2);
+    #####:  201:		int result = temp->next->value;
+    #####:  202:		delete(temp->next);
+    #####:  203:		temp->next = NULL;
+    #####:  204:		last = temp;
+    #####:  205:		size--;
+        -:  206:		
+    #####:  207:		return result;
+        -:  208:	} else {
+        -:  209:		
+    #####:  210:		int result = root->value;
+    #####:  211:		delete(root);
+    #####:  212:		root = NULL;
+    #####:  213:		last = NULL;
+    #####:  214:		size = 0;
+        -:  215:		
+    #####:  216:		return result;
+        -:  217:	}
+    #####:  218:}
+        -:  219:
+        -:  220:int List::removeFirst() {
+        -:  221:	
+        1:  222:	if (size <= 0) {
+    #####:  223:		cout << "Size of list less/equal zero" << endl;
+    #####:  224:		return 0;
+        -:  225:	}
+        -:  226:	
+        1:  227:	if(size >= 1) {
+        -:  228:		
+        1:  229:		Node* next = root->next;
+        1:  230:		int result = root->value;
+        2:  231:		delete(root);
+        1:  232:		root = next;
+        1:  233:		size--;
+        1:  234:		isCached = false;
+        -:  235:		
+        1:  236:		return result;
+        -:  237:	} else {
+    #####:  238:		return pop();
+        -:  239:	}
+        1:  240:}
+        -:  241:
+        -:  242:int List::removeAt(int index) {
+        -:  243:	
+       10:  244:	if (index < 0 || index >= size) {
+        4:  245:		cout << "Invalid index" << endl;
+        4:  246:		return 0;
+        -:  247:	}
+        -:  248:	
+        1:  249:	if (index == 0) {
+        1:  250:		return removeFirst();
+        -:  251:	}
+        -:  252:	
+    #####:  253:	if (index == size-1) {
+    #####:  254:		return pop();
+        -:  255:	}
+        -:  256:	
+    #####:  257:	Node* temp = getNodeAt(index - 1);
+    #####:  258:	Node* nodeToDelete = temp->next;
+    #####:  259:	int result = temp->value;
+    #####:  260:	temp->next = temp->next->next;
+    #####:  261:	delete(nodeToDelete);
+    #####:  262:	size--;
+    #####:  263:	isCached = false;
+        -:  264:	
+    #####:  265:	return result;
+        5:  266:}
+        -:  267:
+        -:  268:void List::clear() {
+        -:  269:	
+    #####:  270:	while (getSize() > 0) {
+    #####:  271:		removeFirst();
+        -:  272:	}
+    #####:  273:}
+        -:  274:
+        -:  275://Нахождение суммы всех четных чисел списка;
+        -:  276://удаление чисел, в которых разряд сотен равен разряду единиц;
+        -:  277:
+        -:  278:int main(int argc, const char * argv[]) {
+        -:  279:	
+        -:  280:	int countOfElements;
+        -:  281:	int val;
+        3:  282:	int i = 0;
+        3:  283:	List list = List();
+        -:  284:	
+        6:  285:	cout << "Input count of items in list" << endl;
+        3:  286:	cin >> countOfElements;
+        3:  287:	cout << endl;
+        -:  288:	
+       14:  289:	while (i < countOfElements) {
+        8:  290:		cout << "Input item" << endl;
+        4:  291:		cin >> val;
+        -:  292:		
+        4:  293:		if (i == 0) {
+        2:  294:			list.addToStart(val);
+        2:  295:		} else {
+        2:  296:			list.addToEnd(val);
+        -:  297:		}
+        4:  298:		i++;
+        -:  299:	}
+        -:  300:
+        3:  301:	int sumOfEvenValues = 0;
+        -:  302:	//int rootNodeValue = list.getNodeValueAt(0);
+        -:  303:	
+       20:  304:	for(int j = 0; countOfElements >= j; j++) {
+        -:  305:
+       14:  306:		int currentValue = list.getNodeValueAt(j);
+        -:  307:		
+       21:  308:		if( (currentValue > 999 ? currentValue % 1000 / 100 : currentValue / 100) == currentValue % 10) {
+        5:  309:			list.removeAt(j);
+        5:  310:		}
+        -:  311:		
+        7:  312:		if(currentValue % 2 == 0) {
+        5:  313:			sumOfEvenValues += currentValue;
+        5:  314:		}
+        7:  315:	}
+        -:  316:	
+       18:  317:	for(int j = 0; list.getSize() > j; j++) {
+       18:  318:		cout<< "Item [" << j << "] = " << list.getNodeValueAt(j) << endl;
+        3:  319:	}
+        -:  320:
+        3:  321:	return 0;
+        3:  322:}
+        -:  323:
