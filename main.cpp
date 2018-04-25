@@ -299,20 +299,30 @@ int main(int argc, const char * argv[]) {
 	}
 
 	int sumOfEvenValues = 0;
-	//int rootNodeValue = list.getNodeValueAt(0);
 	
-	for(int j = 0; countOfElements >= j; j++) {
+	for(int j = 0; list.getSize() >= j; j++) {
 
-		int currentValue = list.getNodeValueAt(j);
+		int currentValue = 0;
+		
+		if (j >= 1) {
+			j--;
+			currentValue = list.getNodeValueAt(j);
+			
+			if( (currentValue > 999 ? currentValue % 1000 / 100 : currentValue / 100) == currentValue % 10) {
+				list.removeAt(j);
+			}
+		}
 		
 		if( (currentValue > 999 ? currentValue % 1000 / 100 : currentValue / 100) == currentValue % 10) {
 			list.removeAt(j);
 		}
-		
+
 		if(currentValue % 2 == 0) {
 			sumOfEvenValues += currentValue;
 		}
 	}
+
+	cout << "size " << list.getSize() << endl;
 	
 	for(int j = 0; list.getSize() > j; j++) {
 		cout<< "Item [" << j << "] = " << list.getNodeValueAt(j) << endl;
